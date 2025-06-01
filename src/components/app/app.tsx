@@ -14,20 +14,65 @@ import { IngredientDetails } from '@components';
 import { ProtectedRoute } from '@components';
 import { AppHeader } from '@components';
 import styles from './app.module.css';
+import { useAppDispatch, useAppSelector } from '../../services/store';
+import { useEffect } from 'react';
+import { deleteCookie, getCookie } from '../../utils/cookie';
+import {
+  fetchIngredients,
+  selectIngredients
+} from '../../slices/ingredientsSlice';
+import {
+  checkUserAuth,
+  init
+} from '../../slices/usersSlice';
+import { fetchFeeds, selectOrders } from '../../slices/ordersSlice';
+import { closeDetailsModal } from '../../slices/modalSlice';
 
 function App() {
   const location = useLocation();
   const background = location.state?.background;
   const navigate = useNavigate();
+  const token = getCookie('accessToken');
+
+  const dispatch = useAppDispatch();
+
+  const ingredients = useAppSelector(selectIngredients);
+  const feed = useAppSelector(selectOrders);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(checkUserAuth())
+        .unwrap()
+        .catch(() => {
+          deleteCookie('accessToken');
+          localStorage.removeItem('refreshToken');
+        });
+    } else {
+      dispatch(init());
+    }
+  }, [token, dispatch]);
+
+  useEffect(() => {
+    if (!ingredients || ingredients.length === 0) {
+      dispatch(fetchIngredients());
+    }
+  }, [ingredients, dispatch]);
+
+  useEffect(() => {
+    if (!feed || feed.length === 0) {
+      dispatch(fetchFeeds());
+    }
+  }, [feed, dispatch]);
 
   const handleModalClose = () => {
     navigate(-1);
+    dispatch(closeDetailsModal());
   };
 
   return (
     <div className={styles.app}>
       <AppHeader />
-
+      {/* TODO: много работы( init, auth ) */}
       <main className={styles.main}>
         <Routes location={background || location}>
           <Route path='/' element={<ConstructorPage />} />
@@ -101,7 +146,6 @@ function App() {
           <Route path='*' element={<NotFound404 />} />
         </Routes>
       </main>
-
       {/* Модальные окна */}
       {background && (
         <Routes>

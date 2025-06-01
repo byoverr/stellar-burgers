@@ -17,6 +17,7 @@ p {
 
 .content {
   overflow-y: scroll;
+  height: 70vh;
 }
 
 .menu {

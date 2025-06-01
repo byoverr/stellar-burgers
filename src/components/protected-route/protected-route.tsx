@@ -1,5 +1,11 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { FC, ReactElement } from 'react';
+import {
+  selectIsAuthenticated,
+  selectAuthChecked
+} from '../../slices/usersSlice';
+import { useAppSelector } from '../../services/store';
+import { Preloader } from '@ui';
 
 interface ProtectedRouteProps {
   onlyUnAuth?: boolean;
@@ -11,7 +17,12 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({
   children
 }) => {
   const location = useLocation();
-  const isAuthenticated = false; // TODO: проверка аутентификации
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isInit = useAppSelector(selectAuthChecked);
+
+  if (!isInit) {
+    return <Preloader />;
+  }
 
   if (onlyUnAuth && isAuthenticated) {
     const from = location.state?.from || '/';

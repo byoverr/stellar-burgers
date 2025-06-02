@@ -33,7 +33,15 @@ const initialState: TUserState = {
 
 export const login = createAsyncThunk(
   'user/login',
-  async (data: TLoginData) => await loginUserApi(data)
+  async (data: TLoginData, { rejectWithValue }) => {
+    try {
+      return await loginUserApi(data);
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message || err?.message || 'Login failed';
+      return rejectWithValue(message);
+    }
+  }
 );
 
 export const register = createAsyncThunk(
@@ -51,17 +59,41 @@ export const register = createAsyncThunk(
 
 export const checkUserAuth = createAsyncThunk(
   'user/checkAuth',
-  async () => await getUserApi()
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getUserApi();
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message || err?.message || 'Auth check failed';
+      return rejectWithValue(message);
+    }
+  }
 );
 
 export const logout = createAsyncThunk(
   'user/logout',
-  async () => await logoutApi()
+  async (_, { rejectWithValue }) => {
+    try {
+      return await logoutApi();
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message || err?.message || 'Logout failed';
+      return rejectWithValue(message);
+    }
+  }
 );
 
 export const updateUser = createAsyncThunk(
   'user/update',
-  async (data: Partial<TRegisterData>) => await updateUserApi(data)
+  async (data: Partial<TRegisterData>, { rejectWithValue }) => {
+    try {
+      return await updateUserApi(data);
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message || err?.message || 'Update failed';
+      return rejectWithValue(message);
+    }
+  }
 );
 
 export const userSlice = createSlice({
@@ -115,7 +147,7 @@ export const userSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || 'Login failed';
+        state.error = (action.payload as string) || 'Login failed';
       })
       .addCase(register.pending, (state) => {
         state.isLoading = true;
@@ -128,12 +160,11 @@ export const userSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
-        // Если мы использовали rejectWithValue(message)
         state.error = (action.payload as string) || 'Registration failed';
       })
-
       .addCase(checkUserAuth.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(checkUserAuth.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -141,17 +172,23 @@ export const userSlice = createSlice({
         state.isAuthenticated = true;
         state.isInit = true;
       })
-      .addCase(checkUserAuth.rejected, (state) => {
+      .addCase(checkUserAuth.rejected, (state, action) => {
         state.isLoading = false;
         state.isInit = true;
+        state.error = (action.payload as string) || 'Auth check failed';
       })
       .addCase(logout.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(logout.fulfilled, (state) => {
         state.isLoading = false;
         state.data = null;
         state.isAuthenticated = false;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = (action.payload as string) || 'Logout failed';
       })
       .addCase(updateUser.pending, (state) => {
         state.isLoading = true;
@@ -160,6 +197,10 @@ export const userSlice = createSlice({
       .addCase(updateUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.data = action.payload.user;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = (action.payload as string) || 'Update failed';
       });
   }
 });

@@ -21,10 +21,7 @@ import {
   fetchIngredients,
   selectIngredients
 } from '../../slices/ingredientsSlice';
-import {
-  checkUserAuth,
-  init
-} from '../../slices/usersSlice';
+import { checkUserAuth, init } from '../../slices/usersSlice';
 import { fetchFeeds, selectOrders } from '../../slices/ordersSlice';
 import { closeDetailsModal } from '../../slices/modalSlice';
 

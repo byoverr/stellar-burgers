@@ -43,6 +43,9 @@ export const Login: FC = () => {
         localStorage.setItem('refreshToken', payload.refreshToken);
         setCookie('accessToken', payload.accessToken);
         dispatch(checkUserAuth());
+      })
+      .catch(() => {
+        // Ошибка уже обработана в slice, здесь можно добавить дополнительную логику если нужно
       });
   };
 

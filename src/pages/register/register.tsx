@@ -35,6 +35,9 @@ export const Register: FC = () => {
           setCookie('accessToken', payload.accessToken);
           dispatch(checkUserAuth());
         }
+      })
+      .catch(() => {
+        // Ошибка уже обработана в slice, здесь можно добавить дополнительную логику если нужно
       });
   };
 

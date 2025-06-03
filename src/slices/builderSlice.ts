@@ -13,7 +13,7 @@ const initialState: TBuilderState = {
   ingredients: []
 };
 
-export const builderSlice = createSlice({
+const builderSlice = createSlice({
   name: 'builder',
   initialState,
   reducers: {
@@ -38,6 +38,15 @@ export const builderSlice = createSlice({
       action: PayloadAction<{ fromIndex: number; toIndex: number }>
     ) => {
       const { fromIndex, toIndex } = action.payload;
+      if (
+        fromIndex < 0 ||
+        toIndex < 0 ||
+        fromIndex >= state.ingredients.length ||
+        toIndex > state.ingredients.length
+      ) {
+        return state; // возвращаем неизмененное состояние, если невалидные данные
+      }
+
       const [movedItem] = state.ingredients.splice(fromIndex, 1);
       state.ingredients.splice(toIndex, 0, movedItem);
     },
@@ -73,5 +82,7 @@ export const selectIngredients = createSelector(
 // Экспорт действий
 export const { addIngredient, removeIngredient, moveIngredient, clearBuilder } =
   builderSlice.actions;
+
+export { builderSlice };
 
 export default builderSlice.reducer;

@@ -1,0 +1,77 @@
+{
+  "success": true,
+  "name": "Флюоресцентный био-марсианский метеоритный бургер",
+  "order": {
+    "ingredients": [
+      {
+        "_id": "643d69a5c3f7b9001cfa093d",
+        "name": "Флюоресцентная булка R2-D3",
+        "type": "bun",
+        "proteins": 44,
+        "fat": 26,
+        "carbohydrates": 85,
+        "calories": 643,
+        "price": 988,
+        "image": "https://code.s3.yandex.net/react/code/bun-01.png",
+        "image_mobile": "https://code.s3.yandex.net/react/code/bun-01-mobile.png",
+        "image_large": "https://code.s3.yandex.net/react/code/bun-01-large.png",
+        "__v": 0
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa0941",
+        "name": "Биокотлета из марсианской Магнолии",
+        "type": "main",
+        "proteins": 420,
+        "fat": 142,
+        "carbohydrates": 242,
+        "calories": 4242,
+        "price": 424,
+        "image": "https://code.s3.yandex.net/react/code/meat-01.png",
+        "image_mobile": "https://code.s3.yandex.net/react/code/meat-01-mobile.png",
+        "image_large": "https://code.s3.yandex.net/react/code/meat-01-large.png",
+        "__v": 0
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa0940",
+        "name": "Говяжий метеорит (отбивная)",
+        "type": "main",
+        "proteins": 800,
+        "fat": 800,
+        "carbohydrates": 300,
+        "calories": 2674,
+        "price": 3000,
+        "image": "https://code.s3.yandex.net/react/code/meat-04.png",
+        "image_mobile": "https://code.s3.yandex.net/react/code/meat-04-mobile.png",
+        "image_large": "https://code.s3.yandex.net/react/code/meat-04-large.png",
+        "__v": 0
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa093d",
+        "name": "Флюоресцентная булка R2-D3",
+        "type": "bun",
+        "proteins": 44,
+        "fat": 26,
+        "carbohydrates": 85,
+        "calories": 643,
+        "price": 988,
+        "image": "https://code.s3.yandex.net/react/code/bun-01.png",
+        "image_mobile": "https://code.s3.yandex.net/react/code/bun-01-mobile.png",
+        "image_large": "https://code.s3.yandex.net/react/code/bun-01-large.png",
+        "__v": 0
+      }
+    ],
+    "_id": "683f51a8c2f30c001cb29bce",
+    "owner": {
+      "name": "1",
+      "email": "aaaa@gmail.com",
+      "createdAt": "2025-06-01T15:34:22.680Z",
+      "updatedAt": "2025-06-02T08:53:48.318Z"
+    },
+    "status": "done",
+    "name": "Флюоресцентный био-марсианский метеоритный бургер",
+    "createdAt": "2025-06-03T19:48:56.920Z",
+    "updatedAt": "2025-06-03T19:48:57.644Z",
+    "number": 80120,
+    "price": 5400
+  }
+}

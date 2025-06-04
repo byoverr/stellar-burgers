@@ -1,6 +1,6 @@
 import { getCookie, setCookie, deleteCookie } from './cookie';
 
-describe('cookieUtils', () => {
+describe('cookie', () => {
   beforeEach(() => {
     document.cookie = '';
   });

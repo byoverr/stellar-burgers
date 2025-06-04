@@ -18,9 +18,12 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   onOrderClick,
   closeOrderModal
 }) => (
-  <section className={styles.burger_constructor}>
+  <section className={styles.burger_constructor} data-cy='constructor_section'>
     {constructorItems?.bun ? (
-      <div className={`${styles.element} mb-4 mr-4`}>
+      <div
+        className={`${styles.element} mb-4 mr-4`}
+        data-cy={'constructor_bun_top'}
+      >
         <ConstructorElement
           type='top'
           isLocked
@@ -32,11 +35,12 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     ) : (
       <div
         className={`${styles.noBuns} ${styles.noBunsTop} ml-8 mb-4 mr-5 text text_type_main-default`}
+        data-cy={'constructor_bun_top_empty'}
       >
         Выберите булки
       </div>
     )}
-    <ul className={styles.elements}>
+    <ul className={styles.elements} data-cy='constructor_ingredients'>
       {constructorItems?.ingredients &&
       constructorItems.ingredients.length > 0 ? (
         constructorItems.ingredients.map(
@@ -58,7 +62,10 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
       )}
     </ul>
     {constructorItems?.bun ? (
-      <div className={`${styles.element} mt-4 mr-4`}>
+      <div
+        className={`${styles.element} mt-4 mr-4`}
+        data-cy={'constructor_bun_bottom'}
+      >
         <ConstructorElement
           type='bottom'
           isLocked
@@ -74,7 +81,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
         Выберите булки
       </div>
     )}
-    <div className={`${styles.total} mt-10 mr-4`}>
+    <div className={`${styles.total} mt-10 mr-4`} data-cy='order_submit_btn'>
       <div className={`${styles.cost} mr-10`}>
         <p className={`text ${styles.text} mr-2`}>{price}</p>
         <CurrencyIcon type='primary' />
@@ -89,9 +96,11 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     </div>
 
     {orderRequest && (
-      <Modal onClose={closeOrderModal} title={'Оформляем заказ...'}>
-        <Preloader />
-      </Modal>
+      <div data-cy='order_modal'>
+        <Modal onClose={closeOrderModal} title={'Оформляем заказ...'}>
+          <Preloader />
+        </Modal>
+      </div>
     )}
 
     {orderModalData && (

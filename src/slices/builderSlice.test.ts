@@ -27,8 +27,8 @@ describe('builderSlice', () => {
     it('should handle addIngredient for bun', () => {
       const action = addIngredient(mockBun);
       const state = builderSlice.reducer(initialState, action);
-      expect(state.bun).toEqual(mockBun);
-      expect(state.ingredients).toEqual([]);
+      expect(state.bun).toMatchObject(mockBun);
+      expect(state.bun).toHaveProperty('uniqueId');
     });
 
     it('should handle addIngredient for non-bun', () => {

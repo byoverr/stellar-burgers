@@ -17,15 +17,20 @@ const builderSlice = createSlice({
   name: 'builder',
   initialState,
   reducers: {
-    addIngredient(state, action: PayloadAction<TIngredient>) {
-      if (action.payload.type === 'bun') {
-        state.bun = action.payload;
-      } else {
-        state.ingredients.push({
-          ...action.payload,
+    addIngredient: {
+      reducer: (state, action: PayloadAction<TIngredientUnique>) => {
+        if (action.payload.type === 'bun') {
+          state.bun = action.payload;
+        } else {
+          state.ingredients.push(action.payload);
+        }
+      },
+      prepare: (ingredient: TIngredient) => ({
+        payload: {
+          ...ingredient,
           uniqueId: uuidv4()
-        });
-      }
+        }
+      })
     },
 
     removeIngredient: (state, action: PayloadAction<string>) => {
@@ -44,7 +49,7 @@ const builderSlice = createSlice({
         fromIndex >= state.ingredients.length ||
         toIndex > state.ingredients.length
       ) {
-        return state; // возвращаем неизмененное состояние, если невалидные данные
+        return;
       }
 
       const [movedItem] = state.ingredients.splice(fromIndex, 1);

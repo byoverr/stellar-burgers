@@ -27,11 +27,12 @@ describe('modalSlice', () => {
     });
 
     it('should handle closeDetailsModal', () => {
-      const initialState = {
-        isDetailsModalOpen: true,
-        isOrderModalOpen: false
+      const stateWithOpenModal = {
+        ...modalSlice.getInitialState(),
+        isDetailsModalOpen: true
       };
-      const state = modalSlice.reducer(initialState, closeDetailsModal());
+
+      const state = modalSlice.reducer(stateWithOpenModal, closeDetailsModal());
       expect(state.isDetailsModalOpen).toBe(false);
     });
 
@@ -42,11 +43,13 @@ describe('modalSlice', () => {
     });
 
     it('should handle closeOrderModal', () => {
-      const initialState = {
-        isDetailsModalOpen: false,
+      // Создаем состояние с открытым модальным окном заказа
+      const stateWithOpenModal = {
+        ...modalSlice.getInitialState(),
         isOrderModalOpen: true
       };
-      const state = modalSlice.reducer(initialState, closeOrderModal());
+
+      const state = modalSlice.reducer(stateWithOpenModal, closeOrderModal());
       expect(state.isOrderModalOpen).toBe(false);
     });
   });

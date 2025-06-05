@@ -19,7 +19,8 @@
 // Закрывается модальное окно и проверяется успешность закрытия.
 // Проверяется, что конструктор пуст.
 
-import {IngredientsResponse, OrderResponse} from "../support/types";
+import { IngredientsResponse, OrderResponse } from "../support/types";
+import { Selectors } from "../support/selectors";
 
 const API_URL = Cypress.env('BURGER_API_URL');
 
@@ -30,15 +31,10 @@ describe('burger constructor test', () => {
         cy.setCookie('accessToken', 'accessToken1');
 
         // Mock API responses
-        cy.fixture('ingredients.json').as('ingredientsData');
-        cy.fixture('user.json').as('userData');
-        cy.fixture('newOrder.json').as('orderData');
-
         cy.intercept('GET', `${API_URL}/ingredients`, { fixture: 'ingredients.json' }).as('getIngredients');
         cy.intercept('GET', `${API_URL}/auth/user`, { fixture: 'user.json' }).as('getUser');
 
         cy.visit('/');
-        cy.wait('@getIngredients');
     });
 
     afterEach(() => {
@@ -48,50 +44,46 @@ describe('burger constructor test', () => {
 
     // Загрузка компонентов конструктора
     it('should load ingredients and display constructor', () => {
-        cy.get('[data-cy=ingredients_section]').should('exist');
-        cy.get('[data-cy=constructor_section]').should('exist');
+        cy.get(Selectors.INGREDIENTS_SECTION).should('exist');
+        cy.get(Selectors.CONSTRUCTOR_SECTION).should('exist');
     });
 
     // Добавление ингредиента из списка ингредиентов в конструктор.
     it('should add bun and ingredient to constructor', () => {
-        cy.get('@getIngredients').its('response.body').then((ingredients: IngredientsResponse) => {
-            const bun = ingredients.data[0]; // Первый элемент - булка
-            const ingredient = ingredients.data[4]; // Какой-то ингредиент
+        cy.wait('@getIngredients').its('response.body').then((ingredients: IngredientsResponse) => {
+            const bun = ingredients.data[0];
+            const ingredient = ingredients.data[4];
 
-            cy.get(`[data-cy="ingredient_add_button_${bun._id}"]`).find('button').click();
-            cy.get(`[data-cy="ingredient_add_button_${ingredient._id}"]`).find('button').click();
+            cy.addIngredientToConstructor(bun._id);
+            cy.addIngredientToConstructor(ingredient._id);
 
-            // Проверяем что булка и ингредиент добавились в конструктор
-            cy.get('[data-cy="constructor_bun_top"]').should('contain', bun.name);
-            cy.get('[data-cy="constructor_bun_bottom"]').should('contain', bun.name);
-            cy.get(`[data-cy="constructor_ingredient_${ingredient._id}"]`).should('contain', ingredient.name);
+            cy.get(Selectors.CONSTRUCTOR_BUN_TOP).should('contain', bun.name);
+            cy.get(Selectors.CONSTRUCTOR_BUN_BOTTOM).should('contain', bun.name);
+            cy.get(Selectors.CONSTRUCTOR_INGREDIENT(ingredient._id)).should('contain', ingredient.name);
         });
     });
 
     // Открытие и закрытие модального окна с описанием ингредиента.
     it('should open and close ingredient modal', () => {
-        cy.get('@getIngredients').its('response.body').then((ingredients: IngredientsResponse) => {
-            const ingredient = ingredients.data[1]; // Второй элемент - начинка
+        cy.wait('@getIngredients').its('response.body').then((ingredients: IngredientsResponse) => {
+            const ingredient = ingredients.data[1];
 
-            cy.get(`[data-cy="ingredient_${ingredient._id}"]`).click();
+            cy.get(Selectors.INGREDIENT_ITEM(ingredient._id)).click();
+            cy.get(Selectors.MODAL(ingredient._id))
+                .should('exist')
+                .should('contain', ingredient.name);
 
-            // Проверяем модальное окно
-            cy.get(`[data-cy="ingredient_${ingredient._id}_modal"]`).should('exist').should('contain', ingredient.name);
+            cy.get(Selectors.MODAL_CLOSE).click();
+            cy.get(Selectors.MODAL(ingredient._id)).should('not.exist');
 
-            // Закрываем через крестик
-            cy.get('[data-cy="modal_close"]').click();
-            cy.get(`[data-cy="ingredient_${ingredient._id}_modal"]`).should('not.exist');
-
-            // Открываем снова и закрываем через оверлей
-            cy.get(`[data-cy="ingredient_${ingredient._id}"]`).click();
-            cy.get('[data-cy="modal_overlay"]').click({ force: true });
-            cy.get(`[data-cy="ingredient_${ingredient._id}_modal"]`).should('not.exist');
+            cy.get(Selectors.INGREDIENT_ITEM(ingredient._id)).click();
+            cy.get(Selectors.MODAL_OVERLAY).click({ force: true });
+            cy.get(Selectors.MODAL(ingredient._id)).should('not.exist');
         });
     });
 
     // Процесс создания заказа
     it('should create new order', () => {
-
         cy.fixture('newOrder.json').then((orderMock: OrderResponse) => {
             cy.intercept('POST', `${API_URL}/orders`, {
                 statusCode: 200,
@@ -99,25 +91,23 @@ describe('burger constructor test', () => {
             }).as('createOrder');
         });
 
-        cy.get('@getIngredients').its('response.body').then((ingredients: IngredientsResponse) => {
-            const bun = ingredients.data[0]; // булка
-            const ingredient = ingredients.data[3]; // ингредиент
+        cy.wait('@getIngredients').its('response.body').then((ingredients: IngredientsResponse) => {
+            const bun = ingredients.data[0];
+            const ingredient = ingredients.data[3];
 
-            cy.get(`[data-cy="ingredient_add_button_${bun._id}"]`).find('button').click();
-            cy.get(`[data-cy="ingredient_add_button_${ingredient._id}"]`).find('button').click();
-
+            cy.addIngredientToConstructor(bun._id);
+            cy.addIngredientToConstructor(ingredient._id);
         });
 
-        cy.get('[data-cy="order_submit_btn"]').find('button').click();
+        cy.get(Selectors.ORDER_SUBMIT_BTN).find('button').click();
 
         cy.wait('@createOrder').then((interception) => {
             const order = interception.response?.body as OrderResponse;
-            cy.get('[data-cy="order_number"]').should('contain', order.order.number);
+            cy.get(Selectors.ORDER_NUMBER).should('contain', order.order.number);
         });
 
-        cy.get('[data-cy="modal_close"]').click();
-
-        cy.get('[data-cy="constructor_bun_top_empty"]').should('contain', 'Выберите булки');
-        cy.get('[data-cy="constructor_ingredients"]').should('contain', 'Выберите начинку');
+        cy.get(Selectors.MODAL_CLOSE).click();
+        cy.get(Selectors.CONSTRUCTOR_BUN_TOP_EMPTY).should('contain', 'Выберите булки');
+        cy.get(Selectors.CONSTRUCTOR_INGREDIENTS_LIST).should('contain', 'Выберите начинку');
     });
 });

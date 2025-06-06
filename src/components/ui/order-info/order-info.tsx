@@ -1,13 +1,39 @@
 import React, { FC, memo } from 'react';
-import {
-  CurrencyIcon,
-  FormattedDate
-} from '@zlden/react-developer-burger-ui-components';
+import { CurrencyIcon } from '@zlden/react-developer-burger-ui-components';
 
 import styles from './order-info.module.css';
 
 import { OrderInfoUIProps } from './type';
 import { OrderStatus } from '@components';
+
+const formatDate = (date: Date): string => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const orderDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+
+  const time = date.toLocaleTimeString('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  if (orderDate.getTime() === today.getTime()) {
+    return `Сегодня, ${time}`;
+  } else if (orderDate.getTime() === yesterday.getTime()) {
+    return `Вчера, ${time}`;
+  } else {
+    return `${date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    })}, ${time}`;
+  }
+};
 
 export const OrderInfoUI: FC<OrderInfoUIProps> = memo(({ orderInfo }) => (
   <div className={styles.wrap}>
@@ -40,7 +66,7 @@ export const OrderInfoUI: FC<OrderInfoUIProps> = memo(({ orderInfo }) => (
     </ul>
     <div className={styles.bottom}>
       <p className='text text_type_main-default text_color_inactive'>
-        <FormattedDate date={orderInfo.date} />
+        {formatDate(orderInfo.date)}
       </p>
       <span className={`text text_type_digits-default pr-4 ${styles.total}`}>
         {orderInfo.total}

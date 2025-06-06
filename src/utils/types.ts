@@ -8,13 +8,16 @@ export type TIngredient = {
   calories: number;
   price: number;
   image: string;
-  image_large: string;
   image_mobile: string;
+  image_large: string;
+  count?: number;
 };
 
-export type TConstructorIngredient = TIngredient & {
-  id: string;
+export type TIngredientUnique = TIngredient & {
+  uniqueId: string;
 };
+
+export type TConstructorIngredient = TIngredientUnique;
 
 export type TOrder = {
   _id: string;

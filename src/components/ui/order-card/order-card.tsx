@@ -1,14 +1,40 @@
 import React, { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  CurrencyIcon,
-  FormattedDate
-} from '@zlden/react-developer-burger-ui-components';
+import { CurrencyIcon } from '@zlden/react-developer-burger-ui-components';
 
 import styles from './order-card.module.css';
 
 import { OrderCardUIProps } from './type';
 import { OrderStatus } from '@components';
+
+const formatDate = (date: Date): string => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const orderDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+
+  const time = date.toLocaleTimeString('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  if (orderDate.getTime() === today.getTime()) {
+    return `Сегодня, ${time}`;
+  } else if (orderDate.getTime() === yesterday.getTime()) {
+    return `Вчера, ${time}`;
+  } else {
+    return `${date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    })}, ${time}`;
+  }
+};
 
 export const OrderCardUI: FC<OrderCardUIProps> = memo(
   ({ orderInfo, maxIngredients, locationState }) => (
@@ -23,7 +49,7 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
           #{String(orderInfo.number).padStart(6, '0')}
         </span>
         <span className='text text_type_main-default text_color_inactive'>
-          <FormattedDate date={orderInfo.date} />
+          {formatDate(orderInfo.date)}
         </span>
       </div>
       <h4 className={`pt-6 text text_type_main-medium ${styles.order_name}`}>

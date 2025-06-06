@@ -13,19 +13,24 @@ const initialState: TBuilderState = {
   ingredients: []
 };
 
-export const builderSlice = createSlice({
+const builderSlice = createSlice({
   name: 'builder',
   initialState,
   reducers: {
-    addIngredient(state, action: PayloadAction<TIngredient>) {
-      if (action.payload.type === 'bun') {
-        state.bun = action.payload;
-      } else {
-        state.ingredients.push({
-          ...action.payload,
+    addIngredient: {
+      reducer: (state, action: PayloadAction<TIngredientUnique>) => {
+        if (action.payload.type === 'bun') {
+          state.bun = action.payload;
+        } else {
+          state.ingredients.push(action.payload);
+        }
+      },
+      prepare: (ingredient: TIngredient) => ({
+        payload: {
+          ...ingredient,
           uniqueId: uuidv4()
-        });
-      }
+        }
+      })
     },
 
     removeIngredient: (state, action: PayloadAction<string>) => {
@@ -38,6 +43,15 @@ export const builderSlice = createSlice({
       action: PayloadAction<{ fromIndex: number; toIndex: number }>
     ) => {
       const { fromIndex, toIndex } = action.payload;
+      if (
+        fromIndex < 0 ||
+        toIndex < 0 ||
+        fromIndex >= state.ingredients.length ||
+        toIndex > state.ingredients.length
+      ) {
+        return;
+      }
+
       const [movedItem] = state.ingredients.splice(fromIndex, 1);
       state.ingredients.splice(toIndex, 0, movedItem);
     },
@@ -73,5 +87,7 @@ export const selectIngredients = createSelector(
 // Экспорт действий
 export const { addIngredient, removeIngredient, moveIngredient, clearBuilder } =
   builderSlice.actions;
+
+export { builderSlice };
 
 export default builderSlice.reducer;
